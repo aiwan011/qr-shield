@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>QR Shield</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Scan buttons -->
+  @if (!scanning) {
+    <ion-button expand="block" (click)="startCamera()">📷 Scan with camera</ion-button>
+  } @else {
+    <ion-button expand="block" color="medium" (click)="stopCamera()">Stop camera</ion-button>
+  }
+
+  <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)">
+  <ion-button expand="block" fill="outline" (click)="fileInput.click()">🖼️ Upload QR image</ion-button>
+
+  <!-- Camera view appears here -->
+  <div id="reader"></div>
+
+  <!-- Typed link -->
+  <ion-item>
+    <ion-input
+      label="Or type / paste a link"
+      labelPlacement="stacked"
+      placeholder="https://example.com"
+      [(ngModel)]="urlInput">
+    </ion-input>
+  </ion-item>
+  <ion-button expand="block" fill="clear" (click)="checkUrl()">Check link</ion-button>
+
+  <!-- Error -->
+  @if (errorMessage) {
+    <ion-text color="danger"><p>{{ errorMessage }}</p></ion-text>
+  }
+
+  <!-- Result -->
+  @if (report) {
+    <ion-card [class]="'rating-' + report.rating">
+      <ion-card-header>
+        <ion-card-subtitle>{{ report.type }}</ion-card-subtitle>
+        <ion-card-title>{{ ratingText(report.rating) }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        This code really goes to: <strong>{{ report.target }}</strong>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list>
+      @for (check of report.checks; track check.name) {
+        <ion-item>
+          <ion-label class="ion-text-wrap">
+            <h2>{{ icon(check.status) }} {{ check.name }}</h2>
+            <p>{{ check.message }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <!-- History -->
+  @if (history.length > 0) {
+    <ion-list>
+      <ion-list-header>
+        <ion-label>Recent scans</ion-label>
+        <ion-button (click)="clearHistory()">Clear</ion-button>
+      </ion-list-header>
+      @for (item of history; track item.originalText) {
+        <ion-item button (click)="openFromHistory(item)">
+          <ion-label class="ion-text-wrap">
+            <h3>{{ icon(item.rating) }} {{ item.target }}</h3>
+            <p>{{ item.type }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+</ion-content>

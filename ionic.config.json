@@ -1,0 +1,7 @@
+{
+  "name": "qr-shield",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
